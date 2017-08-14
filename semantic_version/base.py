@@ -74,6 +74,9 @@ class Version(object):
     partial_version_re = re.compile(r'^(\d+)(?:\.(\d+)(?:\.(\d+))?)?(?:-([0-9a-zA-Z.-]*))?(?:\+([0-9a-zA-Z.-]*))?$')
 
     def __init__(self, version_string, partial=False):
+        self._has_v_prefix = version_string.startswith("v")
+        if self._has_v_prefix:
+            version_string = version_string[1:]
         major, minor, patch, prerelease, build = self.parse(version_string, partial)
 
         self.major = major
@@ -268,6 +271,8 @@ class Version(object):
             version = '%s-%s' % (version, '.'.join(self.prerelease))
         if self.build or (self.partial and self.build == ()):
             version = '%s+%s' % (version, '.'.join(self.build))
+        if self._has_v_prefix:
+            version = "v" + version
         return version
 
     def __repr__(self):
